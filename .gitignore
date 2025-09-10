@@ -1,5 +1,6 @@
 *.env
 *.json
+__pycache__
 
 !example.accounts.json
 !example.env

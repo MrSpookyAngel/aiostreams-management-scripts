@@ -51,13 +51,19 @@ def main():
             headers={"Content-Type": "application/json"},
         )
 
-        with urllib.request.urlopen(req, timeout=10) as resp:
+        try:
+            resp = urllib.request.urlopen(req, timeout=10)
             response = resp.read().decode("utf-8")
-            success = json.loads(response).get("success", False)
-            if success:
-                print(f"Successfully processed account: {uuid}")
-            else:
-                print(f"Failed to process account: {uuid}")
+            response = json.loads(response)
+
+            if not response.get("success"):
+                print(f"Failed to process account: {response.get('error')}")
+                continue
+        except urllib.error.HTTPError:
+            print(f"Failed to process account: {uuid}")
+            continue
+
+        print(f"Successfully processed account: {uuid}")
 
         time.sleep(1)
 
