@@ -1,0 +1,12 @@
+{
+  "accounts": [
+    {
+      "uuid": "<uuid1>",
+      "password": "password1"
+    },
+    {
+      "uuid": "<uuid2>",
+      "password": "password2"
+    }
+  ]
+}
