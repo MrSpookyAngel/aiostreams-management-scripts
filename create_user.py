@@ -2,6 +2,7 @@ import os
 import json
 import secrets
 import urllib.request
+import urllib.parse
 from utils import load_dotenv
 
 # Usage: python create_user.py
@@ -56,10 +57,10 @@ def main():
         return
 
     uuid = response.get("data", {}).get("uuid")
-    account = {
-        "uuid": uuid,
-        "password": password,
-    }
+    encrypted_password = response.get("data", {}).get("encryptedPassword")
+    manifest_url = f"{BASE_URL}/stremio/{uuid}/{encrypted_password}/manifest.json"
+    encoded_manifest_url = urllib.parse.quote(manifest_url, safe=":/")
+    account = {"uuid": uuid, "password": password, "manifest": encoded_manifest_url}
     print(f"User created successfully: {account}")
 
     with open(ACCOUNTS_JSON_PATH, "r+", encoding="utf-8") as f:
