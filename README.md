@@ -12,7 +12,7 @@ python create_user.py
 ## Example Usage
 ```
 python create_user.py
-User created successfully: {'uuid': '7b4d00ac-aa20-4e44-ad19-8e8f2ed23f71', 'password': '0ousjsMIZDRY4Sobi67PWoSY2g5fzdLO5MpXrBSN6i9m4FmzPBalWt2lV3uJWAG3rQDTBzRRMtj1TDYMTnF4YO9Lwe10YzIY-6CeiX6F_tWwAwzIH7lsnXgVB5goNLGmpGleF5GGHrCMczM_BADgP11auVUhVOWmnjsE17zH1yY'}
+User created successfully: {'uuid': 'ce4ce4cd-f733-4dae-be68-601e92eb02da', 'password': 'GRAcmTLjGD38HTJJM32zjdTkUFIH15uw5g3PciflSmgmKULVynsEoWn4cUdS0kI-uqK67pTilbjt0mm0jpS98oRwACo2XyI27yuxOKcACwBqlDUHt_Wb1jFQhygs8n_Adz1zCZlaMOccMcxH6LBuOSzxGMzbCOULu19CT7PH71U', 'manifest': 'https://<your-domain>/stremio/ce4ce4cd-f733-4dae-be68-601e92eb02da/eyJpdiI6ImVPN0pFaWpKRlJCMmduZDh2OFdCNVE9PSIsImVuY3J5cHRlZCI6ImVVNGkyQVJvY1pjRWgvU3ZyR3VLazlsWTByZTF5UU0vRDlTRStFRXQxTFVoRnRPdXZINjY2WUlhWFF1am9sT2QwSGxGRlVDcjZyejN3Y3VoRnAzUW9Md2V4dWttM0hJTmZuekF2Wit3V0JvWUJDdndqQ0ZGaEJ5cGxVQ1J5d21TWnZQZHJGc2dGcVNubTFDNFU4RVNHejFOMjV3dllxWDk3K0FVOVhwTHZwazJFZUtmOFliODlTOXo2MXREdCtlV3lxMWlwLzF6SHg3ekswcEdQQWZXeXk0ZU14SVA0UFkrdkV5QXdvaG5seDQ9IiwidHlwZSI6ImFpb0VuY3J5cHQifQ/manifest.json'}
 ```
 
 # Delete User
@@ -24,9 +24,9 @@ python delete_user.py
 ```
 ## Example Usage
 ```
-Enter the UUID of the user to delete: 7b4d00ac-aa20-4e44-ad19-8e8f2ed23f71
-Processing account: 7b4d00ac-aa20-4e44-ad19-8e8f2ed23f71
-Successfully deleted user: 7b4d00ac-aa20-4e44-ad19-8e8f2ed23f71
+Enter the UUID of the user to delete: ce4ce4cd-f733-4dae-be68-601e92eb02da
+Processing account: ce4ce4cd-f733-4dae-be68-601e92eb02da
+Successfully deleted user: ce4ce4cd-f733-4dae-be68-601e92eb02da
 ```
 
 # Update All Users
@@ -39,6 +39,6 @@ python update_all_users.py
 ## Example Usage
 ```
 python update_all_users.py
-Processing account: 7b4d00ac-aa20-4e44-ad19-8e8f2ed23f71
-Successfully processed account: 7b4d00ac-aa20-4e44-ad19-8e8f2ed23f71
+Processing account: ce4ce4cd-f733-4dae-be68-601e92eb02da
+Successfully updated account: ce4ce4cd-f733-4dae-be68-601e92eb02da
 ```
