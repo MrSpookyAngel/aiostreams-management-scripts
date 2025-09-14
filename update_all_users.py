@@ -57,13 +57,13 @@ def main():
             response = json.loads(response)
 
             if not response.get("success"):
-                print(f"Failed to process account: {response.get('error')}")
+                print(f"Failed to update account: {response.get('error')}")
                 continue
         except urllib.error.HTTPError:
-            print(f"Failed to process account: {uuid}")
+            print(f"Failed to update account: {uuid}")
             continue
 
-        print(f"Successfully processed account: {uuid}")
+        print(f"Successfully updated account: {uuid}")
 
         time.sleep(1)
 
