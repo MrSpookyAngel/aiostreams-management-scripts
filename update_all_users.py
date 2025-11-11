@@ -47,7 +47,7 @@ def main():
         req = urllib.request.Request(
             API_URL,
             data=data,
-            method="POST",
+            method="PUT",
             headers={"Content-Type": "application/json"},
         )
 
