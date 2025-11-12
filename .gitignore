@@ -3,4 +3,5 @@
 __pycache__
 
 !example.accounts.json
+!example.stremio_accounts.json
 !example.env
