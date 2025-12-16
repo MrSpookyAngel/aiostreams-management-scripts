@@ -11,6 +11,11 @@ from utils import load_dotenv
 def get_auth_key(email, password, login_url):
     """Fetches the auth key for the given email and password. Returns the auth key or None if there was an error."""
 
+    USER_AGENT = os.getenv(
+        "USER_AGENT",
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:140.0) Gecko/20100101 Firefox/140.0",
+    )
+
     data = json.dumps(
         {
             "authKey": None,
@@ -25,6 +30,7 @@ def get_auth_key(email, password, login_url):
         method="POST",
         headers={
             "Content-Type": "application/json",
+            "User-Agent": USER_AGENT,
         },
     )
 
@@ -44,6 +50,11 @@ def get_auth_key(email, password, login_url):
 def get_addons(auth_key, base_url):
     """Fetches the addons for the given auth key. Returns a list of addons or None if there was an error."""
 
+    USER_AGENT = os.getenv(
+        "USER_AGENT",
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:140.0) Gecko/20100101 Firefox/140.0",
+    )
+
     url = f"{base_url}/addonCollectionGet"
     data = json.dumps({"authKey": auth_key, "type": "AddonCollectionGet"}).encode(
         "utf-8"
@@ -55,6 +66,7 @@ def get_addons(auth_key, base_url):
         method="POST",
         headers={
             "Content-Type": "application/json",
+            "User-Agent": USER_AGENT,
         },
     )
 
@@ -73,6 +85,11 @@ def get_addons(auth_key, base_url):
 def update_addons(addons):
     """Updates the addon manifest to the latest version. Returns the updated addons."""
 
+    USER_AGENT = os.getenv(
+        "USER_AGENT",
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:140.0) Gecko/20100101 Firefox/140.0",
+    )
+
     updated_addons = []
 
     for addon in addons:
@@ -86,6 +103,7 @@ def update_addons(addons):
             method="GET",
             headers={
                 "Content-Type": "application/json",
+                "User-Agent": USER_AGENT,
             },
         )
 
@@ -99,12 +117,13 @@ def update_addons(addons):
                 "manifest": manifest,
             }
 
-            if addon["manifest"]["name"] == "Cinemeta":
+            if addon.get("manifest", {}).get("name") == "Cinemeta":
                 catalogs = updated_addon.get("manifest", {}).get("catalogs", [])
-                new_catalogs = []
-                for catalog in catalogs:
-                    if catalog.get("id") in ["last-videos", "calendar-videos"]:
-                        new_catalogs.append(catalog)
+                new_catalogs = [
+                    c
+                    for c in catalogs
+                    if c.get("id") in ["last-videos", "calendar-videos"]
+                ]
                 updated_addon["manifest"]["catalogs"] = new_catalogs
                 updated_addon["manifest"]["resources"] = ["catalog", "addon_catalog"]
 
@@ -112,14 +131,20 @@ def update_addons(addons):
         except urllib.error.HTTPError:
             continue
         except urllib.error.URLError:
-            print("Connection refused.")
-            exit(1)
+            print(f"Connection refused. Keeping original addon manifest: {manifestUrl}")
+            updated_addons.append(addon)
+            continue
 
     return updated_addons if updated_addons else None
 
 
 def set_addons(auth_key, addons, base_url):
     """Sets the addons for the given auth key. Returns the response from the server or None if there was an error."""
+
+    USER_AGENT = os.getenv(
+        "USER_AGENT",
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:140.0) Gecko/20100101 Firefox/140.0",
+    )
 
     url = f"{base_url}/addonCollectionSet"
     data = json.dumps(
@@ -136,6 +161,7 @@ def set_addons(auth_key, addons, base_url):
         method="POST",
         headers={
             "Content-Type": "application/json",
+            "User-Agent": USER_AGENT,
         },
     )
 
