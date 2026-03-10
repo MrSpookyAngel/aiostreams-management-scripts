@@ -14,6 +14,11 @@ def main():
     BASE_URL = os.getenv("BASE_URL")
     ACCOUNTS_JSON_PATH = os.getenv("ACCOUNTS_JSON_PATH")
 
+    USER_AGENT = os.getenv(
+        "USER_AGENT",
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:140.0) Gecko/20100101 Firefox/140.0",
+    )
+
     if not all([BASE_URL, ACCOUNTS_JSON_PATH]):
         print("One or more environment variables are not set.")
         return
@@ -51,7 +56,10 @@ def main():
         API_URL,
         data=data,
         method="DELETE",
-        headers={"Content-Type": "application/json"},
+        headers={
+            "Content-Type": "application/json",
+            "User-Agent": USER_AGENT,
+        },
     )
 
     try:
