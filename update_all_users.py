@@ -1,11 +1,10 @@
+import base64
 import json
 import os
 import time
 import urllib.request
-from utils import load_dotenv
 
-# Usage: python update_all_users.py
-# This script updates all user accounts with the latest configuration.
+from utils import load_dotenv
 
 
 def main():
@@ -14,13 +13,16 @@ def main():
     BASE_URL = os.getenv("BASE_URL")
     ACCOUNTS_JSON_PATH = os.getenv("ACCOUNTS_JSON_PATH")
     AIOSTREAMS_CONFIG_PATH = os.getenv("AIOSTREAMS_CONFIG_PATH")
+    CONFIG_ACCESS_KEY = os.getenv("CONFIG_ACCESS_KEY")
 
     USER_AGENT = os.getenv(
         "USER_AGENT",
         "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:140.0) Gecko/20100101 Firefox/140.0",
     )
 
-    if not all([BASE_URL, ACCOUNTS_JSON_PATH, AIOSTREAMS_CONFIG_PATH]):
+    if not all(
+        [BASE_URL, ACCOUNTS_JSON_PATH, AIOSTREAMS_CONFIG_PATH, CONFIG_ACCESS_KEY]
+    ):
         print("One or more environment variables are not set.")
         return
 
@@ -37,15 +39,22 @@ def main():
 
     for account in accounts:
         uuid = account["uuid"]
-        password = account["password"]
 
         print(f"Processing account: {uuid}")
 
+        password = account["password"]
+
+        credentials = f"{uuid}:{password}"
+        base64_credentials = base64.b64encode(credentials.encode("utf-8")).decode(
+            "utf-8"
+        )
+
         data = json.dumps(
             {
-                "uuid": uuid,
-                "password": password,
-                "config": aiostreams_config,
+                "config": {
+                    **aiostreams_config,
+                    "accessKey": CONFIG_ACCESS_KEY,
+                }
             }
         ).encode("utf-8")
 
@@ -54,6 +63,7 @@ def main():
             data=data,
             method="PUT",
             headers={
+                "Authorization": f"Basic {base64_credentials}",
                 "Content-Type": "application/json",
                 "User-Agent": USER_AGENT,
             },
@@ -61,14 +71,13 @@ def main():
 
         try:
             resp = urllib.request.urlopen(req, timeout=10)
-            response = resp.read().decode("utf-8")
-            response = json.loads(response)
-
+            response = json.loads(resp.read().decode("utf-8"))
             if not response.get("success"):
-                print(f"Failed to update account: {response.get('error')}")
+                print(f"Failed to update account {uuid}: {response.get('error')}")
                 continue
-        except urllib.error.HTTPError:
-            print(f"Failed to update account: {uuid}")
+        except urllib.error.HTTPError as e:
+            body = e.read().decode("utf-8")
+            print(f"Failed to update account {uuid}: HTTP {e.code} - {body}")
             continue
 
         print(f"Successfully updated account: {uuid}")

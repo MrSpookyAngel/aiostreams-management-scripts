@@ -1,8 +1,9 @@
-import os
 import json
+import os
 import secrets
-import urllib.request
 import urllib.parse
+import urllib.request
+
 from utils import load_dotenv
 
 # Usage: python create_user.py
@@ -15,13 +16,16 @@ def main():
     BASE_URL = os.getenv("BASE_URL")
     ACCOUNTS_JSON_PATH = os.getenv("ACCOUNTS_JSON_PATH")
     AIOSTREAMS_CONFIG_PATH = os.getenv("AIOSTREAMS_CONFIG_PATH")
+    CONFIG_ACCESS_KEY = os.getenv("CONFIG_ACCESS_KEY")
 
     USER_AGENT = os.getenv(
         "USER_AGENT",
         "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:140.0) Gecko/20100101 Firefox/140.0",
     )
 
-    if not all([BASE_URL, ACCOUNTS_JSON_PATH, AIOSTREAMS_CONFIG_PATH]):
+    if not all(
+        [BASE_URL, ACCOUNTS_JSON_PATH, AIOSTREAMS_CONFIG_PATH, CONFIG_ACCESS_KEY]
+    ):
         print("One or more environment variables are not set.")
         return
 
@@ -37,7 +41,10 @@ def main():
 
     data = json.dumps(
         {
-            "config": aiostreams_config,
+            "config": {
+                **aiostreams_config,
+                "accessKey": CONFIG_ACCESS_KEY,
+            },
             "password": password,
         }
     ).encode("utf-8")
@@ -61,7 +68,8 @@ def main():
             print(f"Failed to create user: {response.get('error')}")
             return
     except urllib.error.HTTPError as e:
-        print(f"Failed to create user: {e}")
+        body = e.read().decode("utf-8")
+        print(f"Failed to create user: HTTP {e.code} - {body}")
         return
 
     uuid = response.get("data", {}).get("uuid")

@@ -1,6 +1,8 @@
-import os
+import base64
 import json
+import os
 import urllib.request
+
 from utils import load_dotenv
 
 # Usage: python delete_user.py
@@ -45,18 +47,14 @@ def main():
 
     print(f"Processing account: {uuid}")
 
-    data = json.dumps(
-        {
-            "uuid": uuid,
-            "password": password,
-        }
-    ).encode("utf-8")
+    credentials = f"{uuid}:{password}"
+    base64_credentials = base64.b64encode(credentials.encode("utf-8")).decode("utf-8")
 
     req = urllib.request.Request(
         API_URL,
-        data=data,
         method="DELETE",
         headers={
+            "Authorization": f"Basic {base64_credentials}",
             "Content-Type": "application/json",
             "User-Agent": USER_AGENT,
         },
@@ -70,8 +68,9 @@ def main():
         if not response.get("success"):
             print(f"Failed to delete user: {response.get('error')}")
             return
-    except urllib.error.HTTPError:
-        print(f"Failed to process account: {uuid}")
+    except urllib.error.HTTPError as e:
+        body = e.read().decode("utf-8")
+        print(f"Failed to process account {uuid}: HTTP {e.code} - {body}")
         return
 
     print(f"Successfully deleted user: {uuid}")
