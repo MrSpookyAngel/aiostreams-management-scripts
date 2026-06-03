@@ -111,7 +111,6 @@ def update_addons(addons):
         try:
             resp = urllib.request.urlopen(req, timeout=10)
             response = resp.read().decode("utf-8")
-            print(response)
             manifest = json.loads(response)
 
             updated_addon = {
