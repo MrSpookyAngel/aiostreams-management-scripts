@@ -2,6 +2,7 @@ import json
 import os
 import time
 import urllib.request
+
 from utils import load_dotenv
 
 # Usage: python refresh_all_users_addons.py
@@ -110,6 +111,7 @@ def update_addons(addons):
         try:
             resp = urllib.request.urlopen(req, timeout=10)
             response = resp.read().decode("utf-8")
+            print(response)
             manifest = json.loads(response)
 
             updated_addon = {
@@ -128,6 +130,12 @@ def update_addons(addons):
                 updated_addon["manifest"]["resources"] = ["catalog", "addon_catalog"]
 
             updated_addons.append(updated_addon)
+        except json.JSONDecodeError:
+            print(
+                f"Invalid JSON response. Keeping original addon manifest: {manifestUrl}."
+            )
+            updated_addons.append(addon)
+            continue
         except urllib.error.HTTPError:
             continue
         except urllib.error.URLError:
